@@ -1,14 +1,11 @@
-from importlib import reload
-import config as c
-import pandas as pd
-
 import os
+import pandas as pd
 from pathlib import Path
 import subprocess
 import bs4
-reload(c)
-
 import ftplib
+
+import config as c
 
 
 class Downloader:
@@ -104,7 +101,6 @@ def run_files():
 ftp = ftplib.FTP()
 ftp.connect(c.FTP_ADDRESS, c.FTP_PORT)
 ftp.login()
-
 
 
 if __name__ == '__main__':
