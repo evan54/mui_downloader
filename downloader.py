@@ -15,6 +15,12 @@ class Downloader:
         self.latest_date = latest_date
         self.address = f'ftp://{c.FTP_ADDRESS}:{c.FTP_PORT}'
 
+        ftp = ftplib.FTP()
+        ftp.connect(c.FTP_ADDRESS, c.FTP_PORT)
+        ftp.login()
+        self.ftp = ftp
+
+
     def _download_links(self, address):
         """
         Given an ftp address it parses it and gets the links and datestamps in
@@ -77,8 +83,8 @@ class Downloader:
             link_split = link.split('/')
             name = link_split[-1]
             cwd = '/' + '/'.join(link_split[3:-1])
-            ftp.cwd(cwd)
-            ftp.delete(name)
+            self.ftp.cwd(cwd)
+            self.ftp.delete(name)
 
 
 def run_files():
@@ -98,9 +104,6 @@ def run_files():
     d.copy_files(year / folder_name)
 
 
-ftp = ftplib.FTP()
-ftp.connect(c.FTP_ADDRESS, c.FTP_PORT)
-ftp.login()
 
 
 if __name__ == '__main__':
