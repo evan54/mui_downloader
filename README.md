@@ -8,3 +8,9 @@ The information is then deleted from the phone.
 
 Goal is to easily transfer imagees / media from various sources, eg whatsapp, DCIM, viber folders of the phone.
 these need to be setup in the `config.py` file.
+
+Use:
+
+Command line tool: `python downloader.py`
+
+GUI (needs kivy): `python app.py`
