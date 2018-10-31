@@ -20,7 +20,6 @@ class Downloader:
         ftp.login()
         self.ftp = ftp
 
-
     def _download_links(self, address):
         """
         Given an ftp address it parses it and gets the links and datestamps in
@@ -88,22 +87,23 @@ class Downloader:
 
 
 def run_files():
-    year = Path(input('Year of pictures\n'))
-    folder_name = Path(input('What is the folder name?\n'))
-    earliest_date = pd.Timestamp(input('Download media since:\n'))
+    year = Path(input('Year of pictures [default is current year]\n'))
+    if year == Path(''):
+        year = Path(pd.Timestamp('now').strftime('%Y'))
+
+    folder_name = Path(input('What is the folder name? [default is temp]\n'))
+    if folder_name == Path(''):
+        folder_name = Path('temp')
+
     latest_date = pd.Timestamp(
             input('Download media until [default is today]:\n'))
     if pd.isnull(latest_date):
         latest_date = pd.Timestamp('now') + pd.Timedelta(days=1)
-    if year == Path(''):
-        year = Path('2018')
-        folder_name = Path('Azores_Madeira')
-        earliest_date = pd.Timestamp('2018-09-26')
-        latest_date = pd.Timestamp('2018-10-03')
+
+    earliest_date = pd.Timestamp(input('Download media since:\n'))
+
     d = Downloader(earliest_date, latest_date)
     d.copy_files(year / folder_name)
-
-
 
 
 if __name__ == '__main__':
