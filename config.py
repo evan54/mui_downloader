@@ -6,6 +6,7 @@ MEDIA_PATHS = [Path(x) for x in [
     'DCIM/Camera/',
     'viber/media/Viber Videos/',
     'viber/media/Viber Images/',
+    'Pictures/scanner/',
 ]]
 
 PICTURE_DIR = Path(HOME_DIR) / Path('Pictures')
