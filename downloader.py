@@ -96,11 +96,14 @@ def run_files():
         folder_name = Path('temp')
 
     latest_date = pd.Timestamp(
-            input('Download media until [default is today]:\n'))
+            input('Download media until [default is latest]:\n'))
     if pd.isnull(latest_date):
         latest_date = pd.Timestamp('now') + pd.Timedelta(days=1)
 
-    earliest_date = pd.Timestamp(input('Download media since:\n'))
+    earliest_date = pd.Timestamp(input('Download media since '
+                                       '[default is from midnight today]:\n'))
+    if pd.isnull(earliest_date):
+        earliest_date = pd.Timestamp('now').normalize()
 
     d = Downloader(earliest_date, latest_date)
     d.copy_files(year / folder_name)
