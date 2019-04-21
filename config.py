@@ -8,6 +8,7 @@ MEDIA_PATHS = [Path(x) for x in [
     'viber/media/Viber Images/',
     'Pictures/scanner/',
     'Pictures/Messenger/',
+    'EMAScanner/',
 ]]
 
 PICTURE_DIR = Path(HOME_DIR) / Path('Pictures')
