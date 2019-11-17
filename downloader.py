@@ -10,15 +10,17 @@ import config as c
 
 class Downloader:
 
-    def __init__(self, earliest_date, latest_date):
+    def __init__(self, earliest_date, latest_date, port):
         self.earliest_date = earliest_date
         self.latest_date = latest_date
-        self.address = f'ftp://{c.FTP_ADDRESS}:{c.FTP_PORT}'
+        self.address = f'ftp://{c.FTP_ADDRESS}:{port}'
 
         ftp = ftplib.FTP()
-        ftp.connect(c.FTP_ADDRESS, c.FTP_PORT)
+        ftp.connect(c.FTP_ADDRESS, port)
         ftp.login()
         self.ftp = ftp
+
+        self._link_visited = {}
 
     def _download_links(self, address):
         """
@@ -33,21 +35,27 @@ class Downloader:
         response = subprocess.run(command, stdout=subprocess.PIPE)
         text_response = response.stdout.decode()
 
-        pre_start = text_response.index('<pre>')
-        pre_end = text_response.index('</pre>')
+        if len(text_response) == 0:
+            links = []
+        else:
 
-        # get <pre>()</pre> block
-        html_lines = text_response[pre_start:pre_end].split('\n')
-        html_lines = html_lines[1:-1]
+            pre_start = text_response.index('<pre>')
+            pre_end = text_response.index('</pre>')
 
-        links = []
-        for line in html_lines:
-            el = line.split()
-            date = pd.Timestamp(' '.join(el[:4]))
-            bs = bs4.BeautifulSoup(line, features='html5lib').find('a')
-            href = bs.attrs['href']
-            if latest_date > date > earliest_date and 'File' in line:
-                links.append([href, date])
+            # get <pre>()</pre> block
+            html_lines = text_response[pre_start:pre_end].split('\n')
+            html_lines = html_lines[1:-1]
+
+            links = []
+            for line in html_lines:
+                el = line.split()
+                date = pd.Timestamp(' '.join(el[:4]))
+                bs = bs4.BeautifulSoup(line, features='html5lib').find('a')
+                href = bs.attrs['href']
+                if latest_date > date > earliest_date and 'File' in line:
+                    links.append([href, date])
+
+        self._link_visited[address] = len(links)
 
         return links
 
@@ -83,10 +91,16 @@ class Downloader:
             name = link_split[-1]
             cwd = '/' + '/'.join(link_split[3:-1])
             self.ftp.cwd(cwd)
-            self.ftp.delete(name)
+            self.ftp.delete(name.replace('%20', ' '))
+
+        for address in self._link_visited:
+            print(address, self._link_visited[address])
 
 
 def run_files():
+    port = int(input(f'What port to use? [default is {c.FTP_PORT}] '))
+    if port == '':
+        port = c.FTP_PORT
     year = Path(input('Year of pictures [default is current year]\n'))
     if year == Path(''):
         year = Path(pd.Timestamp('now').strftime('%Y'))
@@ -105,7 +119,7 @@ def run_files():
     if pd.isnull(earliest_date):
         earliest_date = pd.Timestamp('now').normalize()
 
-    d = Downloader(earliest_date, latest_date)
+    d = Downloader(earliest_date, latest_date, port)
     d.copy_files(year / folder_name)
 
 
