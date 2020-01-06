@@ -10,13 +10,13 @@ import config as c
 
 class Downloader:
 
-    def __init__(self, earliest_date, latest_date, port):
+    def __init__(self, earliest_date, latest_date, address, port):
         self.earliest_date = earliest_date
         self.latest_date = latest_date
-        self.address = f'ftp://{c.FTP_ADDRESS}:{port}'
+        self.address = f'ftp://{address}:{port}'
 
         ftp = ftplib.FTP()
-        ftp.connect(c.FTP_ADDRESS, port)
+        ftp.connect(address port)
         ftp.login()
         self.ftp = ftp
 
@@ -98,6 +98,9 @@ class Downloader:
 
 
 def run_files():
+    address = int(input(f'What address to use? [default is {c.FTP_ADDRESS}] '))
+    if address == '':
+        address = c.FTP_ADDRESS
     port = int(input(f'What port to use? [default is {c.FTP_PORT}] '))
     if port == '':
         port = c.FTP_PORT
@@ -119,7 +122,7 @@ def run_files():
     if pd.isnull(earliest_date):
         earliest_date = pd.Timestamp('now').normalize()
 
-    d = Downloader(earliest_date, latest_date, port)
+    d = Downloader(earliest_date, latest_date, address, port)
     d.copy_files(year / folder_name)
 
 
