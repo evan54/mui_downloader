@@ -1,5 +1,5 @@
 from pathlib import Path
-from private_config import HOME_DIR
+import os
 
 MEDIA_PATHS = [Path(x) for x in [
     'WhatsApp/Media/WhatsApp Images/',
@@ -16,7 +16,7 @@ MEDIA_PATHS = [Path(x) for x in [
     'EMAScanner/',
 ]]
 
-PICTURE_DIR = Path(HOME_DIR) / Path('Pictures')
+PICTURE_DIR = Path(os.environ['HOME']) / Path('Pictures')
 
 # FTP_ADDRESS = '10.0.0.138'
 # FTP_ADDRESS = '192.168.1.105'

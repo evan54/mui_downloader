@@ -16,7 +16,7 @@ class Downloader:
         self.address = f'ftp://{address}:{port}'
 
         ftp = ftplib.FTP()
-        ftp.connect(address port)
+        ftp.connect(address, port)
         ftp.login()
         self.ftp = ftp
 
@@ -98,7 +98,7 @@ class Downloader:
 
 
 def run_files():
-    address = int(input(f'What address to use? [default is {c.FTP_ADDRESS}] '))
+    address = input(f'What address to use? [default is {c.FTP_ADDRESS}] ')
     if address == '':
         address = c.FTP_ADDRESS
     port = int(input(f'What port to use? [default is {c.FTP_PORT}] '))
